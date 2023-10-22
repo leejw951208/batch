@@ -1,5 +1,5 @@
 package com.example.batch.member
 
-enum class Status {
+enum class MemberStatus {
     ACTIVE, SLEEP, WITHDRAW
 }

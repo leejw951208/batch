@@ -1,6 +1,6 @@
 package com.example.batch.member.entity
 
-import com.example.batch.member.Status
+import com.example.batch.member.MemberStatus
 import jakarta.persistence.*
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @Table(name = "t_member")
 class Member (
     name: String?,
-    status: Status?
+    status: MemberStatus?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ class Member (
     var status = status
         protected set
 
-    fun changeStatus(status: Status) {
+    fun changeStatus(status: MemberStatus) {
         this.status = status
     }
 }

@@ -1,6 +1,6 @@
 package com.example.batch.job
 
-import com.example.batch.member.Status
+import com.example.batch.member.MemberStatus
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
@@ -14,16 +14,13 @@ class JobController(
     private val job: Job
 ) {
     @GetMapping("/job")
-    fun testJob() {
-        val createDate = LocalDate.now()
-        val status = Status.SLEEP
-
-        val jobParameters = JobParametersBuilder()
-            .addString("createDate", createDate.toString())
-            .addString("status", status.name)
+    fun testJob(): String {
+        val jobParametersBuilder = JobParametersBuilder()
+            .addString("requestDate", LocalDate.now().toString())
+            .addString("status", MemberStatus.SLEEP.name)
             .toJobParameters()
 
-        jobLauncher.run(job, jobParameters)
-
+        val jobExecution = jobLauncher.run(job, jobParametersBuilder)
+        return jobExecution.toString()
     }
 }
