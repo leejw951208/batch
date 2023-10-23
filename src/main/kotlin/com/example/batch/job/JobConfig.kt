@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 const val JOB_NAME = "member"
@@ -32,18 +32,18 @@ class JobConfig(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)!!
 
-    @Bean(name = [JOB_NAME + "_jobParameter"])
-    @JobScope
-    fun jobParameter(@Value("#{jobParameters[requestDate]}") requestDateStr: String, @Value("#{jobParameters[status]}") status: MemberStatus): RequestJobParameter {
-        val requestDate = LocalDate.parse(requestDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        return RequestJobParameter(requestDate, status)
-    }
-
     @Bean(name = [JOB_NAME + "_job"])
     fun job(jobRepository: JobRepository, transactionManager: PlatformTransactionManager): Job {
         return JobBuilder(JOB_NAME + "_job", jobRepository)
             .start(step(jobRepository, transactionManager))
             .build()
+    }
+
+    @Bean(name = [JOB_NAME + "_jobParameter"])
+    @JobScope
+    fun jobParameter(@Value("#{jobParameters[requestDate]}") requestDateStr: String, @Value("#{jobParameters[status]}") status: MemberStatus): RequestJobParameter {
+        val requestDate = LocalDateTime.parse(requestDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        return RequestJobParameter(requestDate, status)
     }
 
     @Bean(name = [JOB_NAME + "_step"])
@@ -60,11 +60,9 @@ class JobConfig(
     @Bean(name = [JOB_NAME + "_reader"])
     @StepScope
     fun reader(): JpaPagingItemReader<Member> {
-        log.info("requestDate = {}", jobParameter.getRequestDate())
-        log.info("status = {}", jobParameter.getStatus())
 
         val params = HashMap<String, Any>()
-        params["requestDate"] = jobParameter.getRequestDate()
+//        params["requestDate"] = requestDateStr!!
         params["status"] = jobParameter.getStatus()
 
         return JpaPagingItemReaderBuilder<Member>()
