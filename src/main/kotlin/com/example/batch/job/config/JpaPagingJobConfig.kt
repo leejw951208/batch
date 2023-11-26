@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
 
 @Configuration
-class JpaPagingItemJob(
+class JpaPagingJobConfig(
         private val entityManagerFactory: EntityManagerFactory,
         private val requestJobParameter: RequestJobParameter
 ) {
